@@ -63,15 +63,19 @@ public class UserMealsUtil {
     }
 
     public static List<UserMealWithExcess> filteredByStreamsOptimized(List<UserMeal> meals, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
-        return meals.stream().collect(new MealExcessCollector(caloriesPerDay));
+        return meals.stream().collect(new MealExcessCollector(caloriesPerDay, startTime, endTime));
 
     }
 
     private static class MealExcessCollector implements Collector<UserMeal, HashMap<UserMeal, Integer>, List<UserMealWithExcess>> {
         int caloriesPerDay;
+        LocalTime startTime;
+        LocalTime endTime;
 
-        public MealExcessCollector(int caloriesPerDay) {
+        public MealExcessCollector(int caloriesPerDay, LocalTime startTime, LocalTime endTime) {
             this.caloriesPerDay = caloriesPerDay;
+            this.startTime = startTime;
+            this.endTime = endTime;
         }
 
         @Override
@@ -95,6 +99,8 @@ public class UserMealsUtil {
         public Function<HashMap<UserMeal, Integer>, List<UserMealWithExcess>> finisher() {
 
             return map -> map.entrySet().stream()
+                    .filter(entry -> TimeUtil.isBetweenHalfOpen(entry.getKey().getLocalTime(),
+                    startTime, endTime))
                     .map(entry -> new UserMealWithExcess(entry.getKey(), entry.getValue()>caloriesPerDay))
                     .collect(Collectors.toList());
         }
