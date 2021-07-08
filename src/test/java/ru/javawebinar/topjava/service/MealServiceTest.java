@@ -10,6 +10,9 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.context.junit4.SpringRunner;
+import ru.javawebinar.topjava.MealTestData;
+import ru.javawebinar.topjava.UserTestData;
+import ru.javawebinar.topjava.model.Meal;
 
 import static org.junit.Assert.*;
 @ContextConfiguration({"classpath:spring/spring-app-test.xml", "classpath:spring/spring-db.xml"})
@@ -48,5 +51,9 @@ public class MealServiceTest {
 
     @Test
     public void create() {
+        Meal created = mealService.create(MealTestData.getNew(), UserTestData.USER_ID);
+        Integer newId = created.getId();
+        Meal newMeal = MealTestData.getNew();
+        newMeal.setId(newId);
     }
 }
