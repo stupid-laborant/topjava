@@ -11,6 +11,8 @@ import java.time.LocalTime;
 @NamedQueries({
         @NamedQuery(name = Meal.DELETE, query = "DELETE FROM Meal m WHERE m.id=:id AND m.user=:user"),
         @NamedQuery(name = Meal.GET, query = "SELECT m FROM Meal m WHERE m.id=:id AND m.user=:user" ),
+        @NamedQuery(name = Meal.ALL_SORTED, query = "SELECT m FROM Meal m WHERE m.user=:user"),
+        @NamedQuery(name = Meal.FILTERED_SORTED, query = "SELECT m FROM Meal m WHERE m.user=:user AND m.dateTime BETWEEN :startDate AND :endDate")
 })
 @Entity
 @Table(name = "meals", uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "date_time"}, name = "meals_unique_user_datetime_idx")})
@@ -29,7 +31,6 @@ public class Meal extends AbstractBaseEntity {
     @Range(min = 1, max = 10000)
     private int calories;
 
-    @Column(name = "user_id")
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 
